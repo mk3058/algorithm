@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     static boolean solution(String input){
-        input=input.toUpperCase();
+        /*input=input.toUpperCase();
         int lt=0, rt=input.length()-1;
 
         while(lt<rt){
@@ -13,7 +13,12 @@ public class Main {
             rt--;
         }
 
-        return true;
+        return true; */
+
+        String inputReverse = new StringBuilder(input).reverse().toString();
+        
+        if(input.equalsIgnoreCase(inputReverse)) return true;
+        else return false;
     }
     public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
