@@ -9,7 +9,7 @@ public class Q4375 {
         int cnt = 1;
 
         while (true) {
-            int input=scanner.nextInt();
+            int input = scanner.nextInt();
             while (true) {
                 if (num % input == 0) {
                     System.out.println(cnt);
