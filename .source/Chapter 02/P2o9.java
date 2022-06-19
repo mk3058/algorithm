@@ -8,7 +8,7 @@ public class P2o9 {
             int i = 0;
             boolean checker = true;
 
-            for (i = 2; i <= (int)Math.sqrt(n); i++) {
+            for (i = 2; i <= (int) Math.sqrt(n); i++) {
                 counter++;
                 if (n % i == 0) {
                     checker = false;
