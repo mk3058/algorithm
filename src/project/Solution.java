@@ -1,74 +1,98 @@
 package project;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-public class Solution {
-    static int numberOfTestCase;
-    static int[][] map; // 0 물에 잠기지 않은 부분, 1 물에 잠긴 부분, 2 이미 방문한 영역
-    static int sideLength;
-    static boolean[][] visited;
-    static int[] dr = { -1, 1, 0, 0 };
-    static int[] dc = { 0, 0, -1, 1 };
-    static int areaCount; // 영역의 개수
+class Solution {
+    private final static int CMD_INIT = 100;
+    private final static int CMD_ADD = 200;
+    private final static int CMD_REMOVE = 300;
+    private final static int CMD_QUERY = 400;
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        numberOfTestCase = scanner.nextInt();
+    private final static UserSolution usersolution = new UserSolution();
 
-        for (int caseNum = 0; caseNum < numberOfTestCase; caseNum++) {
-            sideLength = scanner.nextInt(); // 삼성국 한 변의 길이
-            int[][] heightOfSamsung = new int[sideLength][sideLength]; // 삼성국 지면의 높이
-            int max = 1; // 최대 영역의 개수
-            int years = 1; // 흐른 시간
-            map = new int[sideLength][sideLength];
-            visited = new boolean[sideLength][sideLength];
-
-            for (int i = 0; i < sideLength; i++) {
-                for (int j = 0; j < sideLength; j++) {
-                    heightOfSamsung[i][j] = scanner.nextInt();
-                }
-            } // 삼성국 지면 높이 입력
-
-            do {
-                for (int i = 0; i < sideLength; i++) {
-                    for (int j = 0; j < sideLength; j++) {
-                        if (heightOfSamsung[i][j] <= years) {
-                            map[i][j] = 1;
-                        } else
-                            map[i][j] = 0;
-                    }
-                } // 물에 잠긴 영역 표시
-
-                areaCount = 0;
-                for (int i = 0; i < sideLength; i++) {
-                    for (int j = 0; j < sideLength; j++) {
-                        if (map[i][j] == 0) {
-                            dfs(i, j);
-                            areaCount++;
-                        }
-                        if (areaCount > max)
-                            max = areaCount;
-                    }
-                }
-                years++;
-            } while (areaCount > 0);
-            System.out.println("#" + (caseNum + 1) + " " + max);
-        }
-
-        scanner.close();
+    private static void String2Char(char[] buf, String str) {
+        for (int k = 0; k < str.length(); ++k)
+            buf[k] = str.charAt(k);
+        buf[str.length()] = '\0';
     }
 
-    public static void dfs(int r, int c) {
-        map[r][c] = 2;
+    private static boolean run(BufferedReader br) throws Exception {
+        int q = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i < 4; i++) {
-            int nr = r + dr[i];
-            int nc = c + dc[i];
+        int id, grade, score;
+        int cmd, ans, ret;
+        boolean okay = false;
 
-            if (nr >= 0 && nc >= 0 && nr < sideLength && nc < sideLength) {
-                if (map[nr][nc] == 0)
-                    dfs(nr, nc);
+        for (int i = 0; i < q; ++i) {
+            StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+            cmd = Integer.parseInt(st.nextToken());
+            switch (cmd) {
+                case CMD_INIT:
+                    usersolution.init();
+                    okay = true;
+                    break;
+                case CMD_ADD:
+                    char[] gender = new char[7];
+                    id = Integer.parseInt(st.nextToken());
+                    grade = Integer.parseInt(st.nextToken());
+                    String2Char(gender, st.nextToken());
+                    score = Integer.parseInt(st.nextToken());
+                    ans = Integer.parseInt(st.nextToken());
+                    ret = usersolution.add(id, grade, gender, score);
+                    if (ret != ans)
+                        okay = false;
+                    break;
+                case CMD_REMOVE:
+                    id = Integer.parseInt(st.nextToken());
+                    ans = Integer.parseInt(st.nextToken());
+                    ret = usersolution.remove(id);
+                    if (ret != ans)
+                        okay = false;
+                    break;
+                case CMD_QUERY:
+                    int gradeCnt, genderCnt;
+                    int[] gradeArr = new int[3];
+                    char[][] genderArr = new char[2][7];
+                    gradeCnt = Integer.parseInt(st.nextToken());
+                    for (int j = 0; j < gradeCnt; ++j) {
+                        gradeArr[j] = Integer.parseInt(st.nextToken());
+                    }
+                    genderCnt = Integer.parseInt(st.nextToken());
+                    for (int j = 0; j < genderCnt; ++j) {
+                        String2Char(genderArr[j], st.nextToken());
+                    }
+                    score = Integer.parseInt(st.nextToken());
+                    ans = Integer.parseInt(st.nextToken());
+                    ret = usersolution.query(gradeCnt, gradeArr, genderCnt, genderArr, score);
+                    if (ret != ans)
+                        okay = false;
+                    break;
+                default:
+                    okay = false;
+                    break;
             }
         }
+        return okay;
+    }
+
+    public static void main(String[] args) throws Exception {
+        int TC, MARK;
+
+        // System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+
+        TC = Integer.parseInt(st.nextToken());
+        MARK = Integer.parseInt(st.nextToken());
+
+        for (int testcase = 1; testcase <= TC; ++testcase) {
+            int score = run(br) ? MARK : 0;
+            System.out.println("#" + testcase + " " + score);
+        }
+
+        br.close();
     }
 }
